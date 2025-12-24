@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  # Наш сайт на Next.js
+  web:
+    build: .
+    container_name: nextjs_app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      # Ссылка для подключения к БД (обрати внимание на хост 'db')
+      - DATABASE_URL=postgresql://postgres:password@db:5432/exam_db
+    depends_on:
+      - db
+
+  # База данных PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: exam_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
